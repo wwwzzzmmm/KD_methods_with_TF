@@ -169,7 +169,9 @@ def Optimizer_w_MHGD(class_loss, LR, epoch, init_epoch, global_step):
     with tf.variable_scope('Optimizer_w_Distillation'):
         # get variables and update operations
         variables_mha     = tf.get_collection('MHA')
-        variables         = [v for v in tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES) if split('/',v.name)[0] == 'Student']
+        variables_teacher = tf.get_collection('Teacher')
+#         variables         = [v for v in tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES) if split('/',v.name)[0] == 'Student']
+        variables         = list(set(tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES))-set(variables_teacher)-set(variables_mha))
         reg_loss          = tf.add_n(tf.losses.get_regularization_losses())
         distillation_loss = tf.get_collection('dist')[0]
         
